@@ -12,7 +12,7 @@ Outside resources?
 
 
 What functionality will the MVP have?
-  Ability to select a city and input an income and then receive
+  Ability to select a city and input an income and then receive the adjusted take home amount after taxes and cost of living and rent.
 
 
 Gonna have to use different questions and use the info from those questions to give options on the next Q's so that we can adjust for state income tax and fed income tax.
@@ -29,3 +29,5 @@ Sites to remember
 
 Ok, looks like I can't use an api for cost of living. So, I'm going to have to use Numbeo's information and hard code it into a table in SQL. New York is 100% on everything. I will use NY as par. If a city is more expensive then I will multiply that city's cost of living by 1.x. If it is lower than NY then I will multiply by .x. There will be two prices. One will be just cost of living and the other will include cost of living plus rent for a 1 bedroom apartment around the city center.
 For tax information I will receive that from taxee.io.
+
+How is this going to look? I will need to gather the city information from the user before making the api call. I will also need to know if they are single or married and their income. I can ask the city and marital status first then get the results back and use the results to ask the question about which tax bracket they would be in by using the information returned as form input. 
