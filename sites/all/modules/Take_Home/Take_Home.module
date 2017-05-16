@@ -149,11 +149,15 @@
   function tax_bracket_form_submit($form, &$form_state){
     $tax_bracket = $form_state['values']['tax_bracket'];
 
-    $_SESSION['tax_rate'] = $tax_bracket;
+    $state_tax_rate=$_SESSION['rates'][$tax_bracket];
+    $_SESSION['state_tax_rate'] = $state_tax_rate;
     $form_state['redirect'] = 'income';
   }
 
   function income_form() {
+    echo'<pre>';
+    var_dump($_SESSION['state_tax_rate']);
+    echo'</pre>';
     $form['income'] = array(
       '#title' => "What is your annual income?",
       '#type' => 'textfield',
