@@ -27,8 +27,7 @@
       'type' => MENU_CALLBACK,
     );
     $items['result'] = array(
-
-      'title' => 'Your take home',
+      'title' => 'Your take home breakdown',
       'page callback' => 'results',
       'access callback' => TRUE,
       'type' => MENU_CALLBACK,
@@ -234,6 +233,12 @@
     $col=$cost*$NYcost+$rent*$NYrent;
     $take_home=$_SESSION['income']-($_SESSION['income']*($_SESSION['state_tax_rate']*.01))-($_SESSION['income']*($fed_tax*.01))-($col*12);
 
+    $income=$_SESSION['income'];
+    $state_tax_total=($_SESSION['income']*($_SESSION['state_tax_rate']*.01));
+    $fed_tax_total=($_SESSION['income']*($fed_tax*.01));
+    $annual_col=$col*12;
+    $income_after_taxes=$income-$fed_tax_total-$state_tax_total;
+
     echo'<pre>';
     var_dump($_SESSION['income']);
     var_dump(($_SESSION['income']*($_SESSION['state_tax_rate']*.01)));
@@ -242,7 +247,7 @@
     var_dump((int)$take_home);
     echo'</pre>';
 
-    return '<h1>$'.(int)$take_home.'</h1>';
+    return '<h1>Total Income: $'.$income.'</h1><hr><h3>Fed Tax: $'.$fed_tax_total.'</h3><h3>State Tax: $'.$state_tax_total.'</h3><h1>Income after taxes: $'.$income_after_taxes.'</h1><hr><h3>Estimated cost of living per month in'.$_SESSION['user_city'].'(including rent): $'.(int)$col.'</h3><h3>Estimated cost of living per month in'.$_SESSION['user_city'].'(including rent): $'.(int)$annual_col.'</h3><h3><a href=https://www.numbeo.com/cost-of-living/'.$_SESSION['user_city'].'>source</a></h3><hr><h1>Take Home after all expenses: $'.(int)$take_home.'</h1><br>';
   }
   // $city_number = $_SESSION['city'];
   // $city=$_SESSION['cities'][$city_number];
