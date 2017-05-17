@@ -74,6 +74,7 @@
     $form['income'] = array(
       '#title' => "What is your annual income?",
       '#type' => 'textfield',
+      '#description' => 'no dollar signs or commas',
       '#required' => TRUE,
       '#element_validate' => array(
         'element_validate_integer_positive'
@@ -213,5 +214,5 @@
     $income_after_taxes=$income-$fed_tax_total-$state_tax_total;
 
     $user_city=$_SESSION['user_city'];
-    return '<h1>Total Income: $'.$income.'</h1><hr><h3>Federal Income Tax: $'.$fed_tax_total.'</h3><h3>State Income Tax: $'.$state_tax_total.'</h3><h1>Income after taxes: $'.$income_after_taxes.'</h1><hr><h3>Average cost of living per month in '.$user_city.'(including 1bdrm rent in city): $'.(int)$col.'</h3><h3>Average cost of living per year in '.$user_city.'(including 1bdrm rent in city): $'.(int)$annual_col.'</h3><h3><a href=https://www.numbeo.com/cost-of-living/in/'.$user_city.'>source</a></h3><hr><h1>Monthly Take Home after taxes and cost of living: $'.(int)($take_home/12).'</h1><h1>Annual Take Home after taxes and cost of living: $'.(int)$take_home.'</h1>';
+    return '<h1>Total Income: $'.$income.'</h1><hr><h3>Federal Income Tax: $'.$fed_tax_total.'</h3><h3>State Income Tax: $'.$state_tax_total.'</h3><h1>Income after taxes: $'.$income_after_taxes.'</h1><hr><h3>Average cost of living per month in '.$user_city.'(including 1bdrm rent in city): $'.(int)$col.'</h3><h3>Average cost of living per year in '.$user_city.'(including 1bdrm rent in city): $'.(int)$annual_col.'</h3><h3><a href=https://www.numbeo.com/cost-of-living/in/'.$user_city.'>cost of living source</a></h3><hr><h1>Monthly Take Home after taxes and cost of living: $'.(int)($take_home/12).'</h1><h1>Annual Take Home after taxes and cost of living: $'.(int)$take_home.'</h1>';
   }
