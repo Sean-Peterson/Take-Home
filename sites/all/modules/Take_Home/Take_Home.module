@@ -27,8 +27,9 @@
       'type' => MENU_CALLBACK,
     );
     $items['result'] = array(
-      'page callback' => 'drupal_get_form',
-      'page arguments' => array('income_form'),
+
+      'title' => 'Your take home',
+      'page callback' => 'results',
       'access callback' => TRUE,
       'type' => MENU_CALLBACK,
     );
@@ -93,6 +94,7 @@
     $key=array_search($city,$_SESSION['unsorted_cities']);
     $state=$_SESSION['unsorted_states'][$key];
 
+    $_SESSION['user_city']=$city;
     $authorization = 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJBUElfS0VZX01BTkFHRVIiLCJodHRwOi8vdGF4ZWUuaW8vdXNlcl9pZCI6IjU5MTlmMTlmZTkyMWMwMzY2NjZmMTMxZiIsImh0dHA6Ly90YXhlZS5pby9zY29wZXMiOlsiYXBpIl0sImlhdCI6MTQ5NDg3MjQ3OX0.grP0a9fG_4NdaOaRWk5H-lwG9XOfcgic8eUmhTPF7Tc';
     $curl = curl_init();
     curl_setopt_array($curl, array(
@@ -100,7 +102,7 @@
       CURLOPT_URL => 'https://taxee.io/api/v2/state/2017/'.$state,
       CURLOPT_USERAGENT => 'SeanCodes'
     ));
-    // curl_setopt($curl, CURLOPT_HEADER, 1);
+
     curl_setopt($curl, CURLOPT_HTTPHEADER,array('Content-Type: application/json', $authorization));
     $articles = curl_exec($curl);
     curl_close($curl);
@@ -162,6 +164,10 @@
       '#title' => "What is your annual income?",
       '#type' => 'textfield',
       '#required' => TRUE,
+      '#element_validate' => array(
+        'element_validate_integer_positive'
+      ),
+
     );
 
     $form['submit'] = array(
@@ -178,6 +184,66 @@
     $form_state['redirect'] = 'result';
   }
 
+  function results() {
+
+    $relationship='';
+    if($_SESSION['relationship'] == 0){
+      $relationship='single';
+    }else{
+      $relationship='married';
+    }
+
+    $authorization = 'Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJBUElfS0VZX01BTkFHRVIiLCJodHRwOi8vdGF4ZWUuaW8vdXNlcl9pZCI6IjU5MTlmMTlmZTkyMWMwMzY2NjZmMTMxZiIsImh0dHA6Ly90YXhlZS5pby9zY29wZXMiOlsiYXBpIl0sImlhdCI6MTQ5NDg3MjQ3OX0.grP0a9fG_4NdaOaRWk5H-lwG9XOfcgic8eUmhTPF7Tc';
+    $curl = curl_init();
+    curl_setopt_array($curl, array(
+      CURLOPT_RETURNTRANSFER => 1,
+      CURLOPT_URL => 'https://taxee.io/api/v2/federal/2017',
+      CURLOPT_USERAGENT => 'SeanCodes'
+    ));
+    curl_setopt($curl, CURLOPT_HTTPHEADER,array('Content-Type: application/json', $authorization));
+    $articles = curl_exec($curl);
+    curl_close($curl);
+    $stuff = json_decode($articles, true);
+
+    for($i=0;$i<count($stuff[$relationship]['income_tax_brackets']);$i++){
+      if($_SESSION['income']<$stuff[$relationship]['income_tax_brackets'][$i]){
+        if($i===0){
+          $tax_array_number=$i;
+        }elseif($i==(count($stuff[$relationship]['income_tax_brackets'])-1)){
+          $tax_array_number=$i;
+        }else{
+          $tax_array_number=$i-1;
+        }
+      }
+    }
+
+    $fed_tax=$stuff[$relationship]['income_tax_brackets'][$tax_array_number]['marginal_rate'];
+    $city=$_SESSION['user_city'];
+    $cost=db_query("SELECT cost FROM col WHERE city = '{$city}'");
+    $cost = $cost->fetchAssoc();
+    $cost=(float)$cost['cost'];
+    $rent=db_query("SELECT rent FROM col WHERE city = '{$city}'");
+    $rent = $rent->fetchAssoc();
+    $rent=(float)$rent['rent'];
+    $NYcost=db_query("SELECT cost FROM col WHERE city = 'New York'");
+    $NYcost = $NYcost->fetchAssoc();
+    $NYcost=(float)$NYcost['cost'];
+    $NYrent=db_query("SELECT rent FROM col WHERE city = 'New York'");
+    $NYrent = $NYrent->fetchAssoc();
+    $NYrent=(float)$NYrent['rent'];
+    $col=$cost*$NYcost+$rent*$NYrent;
+    $take_home=$_SESSION['income']-($_SESSION['income']*($_SESSION['state_tax_rate']*.01))-($_SESSION['income']*($fed_tax*.01))-($col*12);
+
+    echo'<pre>';
+    var_dump($_SESSION['income']);
+    var_dump(($_SESSION['income']*($_SESSION['state_tax_rate']*.01)));
+    var_dump(($_SESSION['income']*($fed_tax*.01)));
+    var_dump($col*12);
+    var_dump((int)$take_home);
+    echo'</pre>';
+
+    return '<h1>$'.(int)$take_home.'</h1>';
+  }
   // $city_number = $_SESSION['city'];
   // $city=$_SESSION['cities'][$city_number];
   // $key=array_search($city,$_SESSION['unsorted_cities']);
@@ -190,7 +256,7 @@
   //   CURLOPT_URL => 'https://taxee.io/api/v2/state/2017/'.$state,
   //   CURLOPT_USERAGENT => 'SeanCodes'
   // ));
-  // // curl_setopt($curl, CURLOPT_HEADER, 1);
+
   // curl_setopt($curl, CURLOPT_HTTPHEADER,array('Content-Type: application/json', $authorization));
   // $articles = curl_exec($curl);
   // curl_close($curl);
@@ -238,7 +304,7 @@
   //     CURLOPT_URL => 'https://taxee.io/api/v2/state/2017/OR',
   //     CURLOPT_USERAGENT => 'SeanCodes'
   //   ));
-  //   // curl_setopt($curl, CURLOPT_HEADER, 1);
+
   //   curl_setopt($curl, CURLOPT_HTTPHEADER,array('Content-Type: application/json', $authorization));
   //   $articles = curl_exec($curl);
   //   curl_close($curl);
