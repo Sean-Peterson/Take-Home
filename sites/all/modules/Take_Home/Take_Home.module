@@ -153,50 +153,7 @@
       $_SESSION['state_tax_rate'] = $state_tax;
     }
     $form_state['redirect'] = 'result';
-
-  //   if (isset($stuff[$relationship]['income_tax_brackets'])) {
-  //     foreach($stuff[$relationship]['income_tax_brackets']as $value){
-  //       $brackets[]=$value['bracket'];
-  //     }
-  //     $_SESSION['brackets']=$brackets;
-  //   }
-  //   if (isset($stuff[$relationship]['income_tax_brackets'])) {
-  //     foreach($stuff[$relationship]['income_tax_brackets']as $value){
-  //       $rates[]=$value['marginal_rate'];
-  //     }
-  //     $_SESSION['rates']=$rates;
-  //   }
-  //
-  //   if(isset($brackets)){
-  //     $form_state['redirect'] = 'tax_bracket';
-  //   }else{
-  //     $form_state['redirect'] = 'income';
-  //   }
   }
-
-  // function tax_bracket_form() {
-  //   $form['tax_bracket'] = array(
-  //     '#title' => "Select your tax bracket",
-  //     '#type' => 'radios',
-  //     '#options' => $_SESSION['brackets'],
-  //     '#required' => TRUE,
-  //   );
-  //
-  //   $form['submit'] = array(
-  //     '#type' => 'submit',
-  //     '#value' => 'submit',
-  //   );
-  //
-  //   return $form;
-  // }
-  // function tax_bracket_form_submit($form, &$form_state){
-  //   $tax_bracket = $form_state['values']['tax_bracket'];
-  //
-  //   $state_tax_rate=$_SESSION['rates'][$tax_bracket];
-  //   $_SESSION['state_tax_rate'] = $state_tax_rate;
-  //   $form_state['redirect'] = 'income';
-  // }
-  //
 
   function results() {
 
@@ -255,17 +212,6 @@
     $annual_col=$col*12;
     $income_after_taxes=$income-$fed_tax_total-$state_tax_total;
 
-    echo'<pre>';
-    // var_dump((int)$_SESSION['income']);
-    // var_dump(($_SESSION['income']*($fed_tax*.01)));
-    // var_dump(($_SESSION['income']*($state_tax*.01)));
-    // var_dump($col*12);
-    // var_dump((int)$take_home);
-    // var_dump((float)$fed_tax);
-    // var_dump((float)$state_tax);
-    // var_dump($stuff[$relationship]['income_tax_brackets']);
-    var_dump($_SESSION['user_city']);
-    echo'</pre>';
     $user_city=$_SESSION['user_city'];
-    return '<h1>Total Income: $'.$income.'</h1><hr><h3>Fed Tax: $'.$fed_tax_total.'</h3><h3>State Tax: $'.$state_tax_total.'</h3><h1>Income after taxes: $'.$income_after_taxes.'</h1><hr><h3>Average cost of living per month in '.$user_city.'(including 1bdrm rent in city): $'.(int)$col.'</h3><h3>Average cost of living per year in '.$user_city.'(including 1bdrm rent in city): $'.(int)$annual_col.'</h3><h3><a href=https://www.numbeo.com/cost-of-living/in/'.$user_city.'>source</a></h3><hr><h1>Monthly Take Home after taxes and cost of living: $'.(int)($take_home/12).'</h1><h1>Annual Take Home after taxes and cost of living: $'.(int)$take_home.'</h1>';
+    return '<h1>Total Income: $'.$income.'</h1><hr><h3>Federal Income Tax: $'.$fed_tax_total.'</h3><h3>State Income Tax: $'.$state_tax_total.'</h3><h1>Income after taxes: $'.$income_after_taxes.'</h1><hr><h3>Average cost of living per month in '.$user_city.'(including 1bdrm rent in city): $'.(int)$col.'</h3><h3>Average cost of living per year in '.$user_city.'(including 1bdrm rent in city): $'.(int)$annual_col.'</h3><h3><a href=https://www.numbeo.com/cost-of-living/in/'.$user_city.'>source</a></h3><hr><h1>Monthly Take Home after taxes and cost of living: $'.(int)($take_home/12).'</h1><h1>Annual Take Home after taxes and cost of living: $'.(int)$take_home.'</h1>';
   }
