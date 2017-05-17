@@ -1,5 +1,5 @@
 name = Gov
 description = What does the api return
-package = News Aggregator
+package = Practice Module
 core = 7.x
 files[] = gov.module
