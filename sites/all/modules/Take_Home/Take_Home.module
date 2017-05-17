@@ -156,9 +156,6 @@
   }
 
   function income_form() {
-    echo'<pre>';
-    var_dump($_SESSION['state_tax_rate']);
-    echo'</pre>';
     $form['income'] = array(
       '#title' => "What is your annual income?",
       '#type' => 'textfield',
@@ -231,23 +228,27 @@
     $NYrent = $NYrent->fetchAssoc();
     $NYrent=(float)$NYrent['rent'];
     $col=$cost*$NYcost+$rent*$NYrent;
-    $take_home=$_SESSION['income']-($_SESSION['income']*($_SESSION['state_tax_rate']*.01))-($_SESSION['income']*($fed_tax*.01))-($col*12);
+    $state_tax=0;
+    if (isset($_SESSION['state_tax_rate'])) {
+      $state_tax=$_SESSION['state_tax_rate'];
+    }
+    $take_home=$_SESSION['income']-($_SESSION['income']*($state_tax*.01))-($_SESSION['income']*($fed_tax*.01))-($col*12);
 
     $income=$_SESSION['income'];
-    $state_tax_total=($_SESSION['income']*($_SESSION['state_tax_rate']*.01));
+    $state_tax_total=($_SESSION['income']*($state_tax*.01));
     $fed_tax_total=($_SESSION['income']*($fed_tax*.01));
     $annual_col=$col*12;
     $income_after_taxes=$income-$fed_tax_total-$state_tax_total;
 
-    echo'<pre>';
-    var_dump($_SESSION['income']);
-    var_dump(($_SESSION['income']*($_SESSION['state_tax_rate']*.01)));
-    var_dump(($_SESSION['income']*($fed_tax*.01)));
-    var_dump($col*12);
-    var_dump((int)$take_home);
-    echo'</pre>';
-
-    return '<h1>Total Income: $'.$income.'</h1><hr><h3>Fed Tax: $'.$fed_tax_total.'</h3><h3>State Tax: $'.$state_tax_total.'</h3><h1>Income after taxes: $'.$income_after_taxes.'</h1><hr><h3>Estimated cost of living per month in'.$_SESSION['user_city'].'(including rent): $'.(int)$col.'</h3><h3>Estimated cost of living per month in'.$_SESSION['user_city'].'(including rent): $'.(int)$annual_col.'</h3><h3><a href=https://www.numbeo.com/cost-of-living/'.$_SESSION['user_city'].'>source</a></h3><hr><h1>Take Home after all expenses: $'.(int)$take_home.'</h1><br>';
+    // echo'<pre>';
+    // var_dump($_SESSION['income']);
+    // var_dump(($_SESSION['income']*($fed_tax*.01)));
+    // var_dump(($_SESSION['income']*($state_tax*.01)));
+    // var_dump($col*12);
+    // var_dump((int)$take_home);
+    // echo'</pre>';
+    unset($_SESSION['state_tax_rate']);
+    return '<h1>Total Income: $'.$income.'</h1><hr><h3>Fed Tax: $'.$fed_tax_total.'</h3><h3>State Tax: $'.$state_tax_total.'</h3><h1>Income after taxes: $'.$income_after_taxes.'</h1><hr><h3>Average cost of living per month in '.$_SESSION['user_city'].'(including 1bdrm rent): $'.(int)$col.'</h3><h3>Average cost of living per year in '.$_SESSION['user_city'].'(including 1bdrm rent): $'.(int)$annual_col.'</h3><h3><a href=https://www.numbeo.com/cost-of-living/in/'.$_SESSION['user_city'].'>source</a></h3><hr><h1>Take Home after all expenses: $'.(int)$take_home.'</h1><br>';
   }
   // $city_number = $_SESSION['city'];
   // $city=$_SESSION['cities'][$city_number];
